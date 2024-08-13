@@ -5,10 +5,24 @@
 
 namespace acd { // Asynchronous Corner Detector
 
-class ArcStarDetector
-{
+class ArcStarDetector {
 public:
-  ArcStarDetector();
+  struct Param {
+    int kSensorWidth_ = 640;
+    int kSensorHeight_ = 480;
+    double filter_threshold_ = 0.5;
+    int kSmallCircleSize = 16;
+    int kLargeCircleSize = 20;
+    int kSmallMinThresh = 3;
+    int kSmallMaxThresh = 6;
+    int kLargeMinThresh = 4;
+    int kLargeMaxThresh = 8;
+    int kBorderLimit = 4;
+
+    Param() {}
+  };
+
+  explicit ArcStarDetector(Param param = ArcStarDetector::Param());
   ~ArcStarDetector();
 
   bool isCorner(double et, int ex, int ey, bool ep);
@@ -19,15 +33,13 @@ private:
   const int kLargeCircle_[20][2];
 
   // Parameters
-  constexpr static const double filter_threshold_ = 0.050;
-  static const int kSensorWidth_ = 240;
-  static const int kSensorHeight_= 180;
+  Param param_;
 
   // Surface of Active Events
   Eigen::MatrixXd sae_[2];
   Eigen::MatrixXd sae_latest_[2];
 };
 
-} // Asynchronous Corner Detector
+} // namespace acd
 
 #endif // ARC_STAR_DETECTOR_H
