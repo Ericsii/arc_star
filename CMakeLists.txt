@@ -1,26 +1,31 @@
-cmake_minimum_required(VERSION 2.8.8)
-project(arc_star_ros)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3 -march=native" )
+cmake_minimum_required(VERSION 3.12)
+project(arc_star)
 
-find_package(Eigen3 REQUIRED)
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  dvs_msgs
-)
+# Default to C++17
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 
-catkin_package(
-  INCLUDE_DIRS 
-    arc_star/include
-    ${catkin_INCLUDE_DIRS}
-)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -march=native")
+endif()
 
-include_directories(
-  include
-  arc_star/include
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIRS}
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-add_executable(arc_star_ros src/arc_star_ros.cc arc_star/src/arc_star_detector.cc)
-target_link_libraries(arc_star_ros ${catkin_LIBRARIES})
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+if(DEFINED ENV{ROS_VERSION})
+  if($ENV{ROS_VERSION} EQUAL "2")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ROS2.cmake)
+  elseif($ENV{ROS_VERSION} EQUAL "1")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/ROS1.cmake)
+  else()
+    message(
+      FATAL_ERROR "invalid ROS_VERSION environment variable: $ENV{ROS_VERSION}")
+  endif()
+else()
+  message(FATAL_ERROR "ROS_VERSION environment variable is not set!")
+endif()
