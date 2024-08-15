@@ -25,6 +25,8 @@ ArcStarNode::ArcStarNode(const rclcpp::NodeOptions &options)
   arc_star_param.kSensorWidth_ = this->declare_parameter("sensor_width", 640);
   arc_star_param.kSensorHeight_ = this->declare_parameter("sensor_height", 480);
   detector_ = std::make_shared<acd::ArcStarDetector>(arc_star_param);
+  RCLCPP_INFO(this->get_logger(), "sensor_width: %d, sensor_height: %d",
+              arc_star_param.kSensorWidth_, arc_star_param.kSensorHeight_);
 
   // Initialize the event packet decoder factory
   decoder_factory_ = std::make_shared<
@@ -33,10 +35,13 @@ ArcStarNode::ArcStarNode(const rclcpp::NodeOptions &options)
   // Create event encoder for publishing corner events
   encoder_type_ = this->declare_parameter("encoder_type", "evt3");
   encoder_ = event_camera_codecs::Encoder::newInstance(encoder_type_);
+  RCLCPP_INFO(this->get_logger(), "Encoder type: %s", encoder_type_.c_str());
 
   event_sub_ = this->create_subscription<EventPacket>(
       "event", 10, std::bind(&ArcStarNode::event_callback, this, _1));
   event_pub_ = this->create_publisher<EventPacket>("corner", 10);
+
+  RCLCPP_INFO(this->get_logger(), "ArcStarNode has been initialized");
 }
 
 auto ArcStarNode::event_callback(
@@ -68,9 +73,9 @@ auto ArcStarNode::event_callback(
   corner_msg.events.reserve(corners.size());
 
   encoder_->setBuffer(&corner_msg.events);
-  encoder_->setSensorTime(corners[0].ts);
+  encoder_->setSensorTime(corner_msg.time_base);
   for (const auto &corner : corners) {
-    encoder_->encodeCD(corner.ts - corners[0].ts, corner.ex, corner.ey,
+    encoder_->encodeCD(corner.ts, corner.ex, corner.ey,
                        corner.polarity);
   }
 

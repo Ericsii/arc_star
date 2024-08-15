@@ -1,0 +1,5 @@
+/**:
+  ros__parameters:
+    sensor_width: 640
+    sensor_height: 480
+    encoder_type: mono
