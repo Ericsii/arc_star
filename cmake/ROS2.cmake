@@ -22,23 +22,23 @@ target_include_directories(
 target_link_libraries(${PROJECT_NAME} ${other_dependencies})
 ament_target_dependencies(${PROJECT_NAME} ${ros_dependencies})
 
+rclcpp_components_register_node(${PROJECT_NAME} PLUGIN "arc_star::ArcStarNode"
+                                EXECUTABLE arc_star_node)
+
 # ---------------- Install --------------- #
-install(DIRECTORY include/
-  DESTINATION include
-)
+install(DIRECTORY include/ DESTINATION include)
 
 # Install  directories
-install(DIRECTORY launch config
-  DESTINATION share/${PROJECT_NAME}
-)
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
 
-install(TARGETS ${PROJECT_NAME}
+install(
+  TARGETS ${PROJECT_NAME}
   EXPORT export_${PROJECT_NAME}
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION bin
-  INCLUDES DESTINATION include
-)
+  INCLUDES
+  DESTINATION include)
 
 ament_export_targets(export_${PROJECT_NAME})
 ament_export_dependencies(${ros_dependencies})

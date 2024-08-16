@@ -75,7 +75,7 @@ auto ArcStarNode::event_callback(
   encoder_->setBuffer(&corner_msg.events);
   encoder_->setSensorTime(corner_msg.time_base);
   for (const auto &corner : corners) {
-    encoder_->encodeCD(corner.ts, corner.ex, corner.ey,
+    encoder_->encodeCD(corner.ts - msg->time_base, corner.ex, corner.ey,
                        corner.polarity);
   }
 

@@ -15,10 +15,13 @@
 
   <!-- ROS2 dependencies -->
   <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
+  <depend condition="$ROS_VERSION == 2">rclcpp</depend>
+  <depend condition="$ROS_VERSION == 2">rclcpp_components</depend>
 
   <!-- ROS1/ROS2 dependencies -->
   <depend>event_camera_msgs</depend>
   <depend>event_camera_codecs</depend>
+  <build_depend>eigen</build_depend>
 
   <export>
     <build_type condition="$ROS_VERSION == 1">catkin</build_type>
